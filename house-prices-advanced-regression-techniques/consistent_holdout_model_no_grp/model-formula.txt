@@ -1,0 +1,6 @@
+SalePrice ~ TotRmsAbvGrd + TotRmsAbvGrd^2 + LotArea + GarageCars + 
+    BsmtFinSF1 + FullBath + HalfBath + Neighborhood + BsmtFinType1 + 
+    Alley + BldgType + BsmtCond + BsmtExposure + BsmtUnfSF + 
+    CentralAir + ExterQual + Fireplaces + GarageArea + HeatingQC + 
+    KitchenQual + MasVnrType + MSSubClass + MSZoning + OverallQual + 
+    PavedDrive + YearBuilt

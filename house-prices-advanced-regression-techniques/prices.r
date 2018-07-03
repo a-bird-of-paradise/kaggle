@@ -41,7 +41,14 @@ models <- c(
     Alley + BldgType + BsmtCond + BsmtExposure + BsmtUnfSF.Grp +
     CentralAir + ExterQual + Fireplaces + GarageArea.Grp + HeatingQC +
     KitchenQual + MasVnrType + MSSubClass + MSZoning + OverallQual +
-    PavedDrive + YearBuilt.Grp)
+    PavedDrive + YearBuilt.Grp,
+  consistent_holdout_model_no_grp = SalePrice ~
+    TotRmsAbvGrd + TotRmsAbvGrd^2 + LotArea + GarageCars + 
+    BsmtFinSF1 + FullBath + HalfBath + Neighborhood + BsmtFinType1 +
+    Alley + BldgType + BsmtCond + BsmtExposure + BsmtUnfSF +
+    CentralAir + ExterQual + Fireplaces + GarageArea + HeatingQC +
+    KitchenQual + MasVnrType + MSSubClass + MSZoning + OverallQual +
+    PavedDrive + YearBuilt)
 
 glms <- purrr::map2(models, names(models), function(x,y)
 {
