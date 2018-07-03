@@ -1,0 +1,3 @@
+SalePrice ~ TotRmsAbvGrd.Grp + TotRmsAbvGrd.Grp^2 + LotArea.Grp + 
+    GarageCars + BsmtFinSF1.Grp + FullBath + HalfBath + YrSold + 
+    BsmtFinType1
