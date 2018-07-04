@@ -3,4 +3,5 @@ SalePrice ~ TotRmsAbvGrd.Grp + TotRmsAbvGrd.Grp^2 + LotArea.Grp +
     BsmtFinType1 + Alley + BldgType + BsmtCond + BsmtExposure + 
     BsmtUnfSF.Grp + CentralAir + ExterQual + Fireplaces + GarageArea.Grp + 
     HeatingQC + KitchenQual + MasVnrType + MSSubClass + MSZoning + 
-    OverallQual + PavedDrive + YearBuilt.Grp + OverallCond
+    OverallQual + PavedDrive + YearBuilt.Grp + OverallCond + 
+    BsmtFinType2 + GarageQual + Heating + LotConfig

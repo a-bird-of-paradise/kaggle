@@ -133,23 +133,26 @@ InvestigateModel <- function(ModelFunction,
   
   deparse(formula(the_model)) %>%
     write(file.path(output_dir,"model-formula.txt"))
-
-  purrr::map(RatingFactors,function(x)
+  
+  if(F)
   {
-    print(x)
-
-    the_plot <- OneWayPlot(augmented_data,x,ResponseVar,HoldoutIndicator)
-
-    ggsave(filename = file.path(output_dir,
-                                paste0(x,".png")),
-           width = 8,
-           height = 6,
-           dpi = 100,
-           plot = the_plot)
-
-    return(x)
-  })
-
+    purrr::map(RatingFactors,function(x)
+    {
+      print(x)
+      
+      the_plot <- OneWayPlot(augmented_data,x,ResponseVar,HoldoutIndicator)
+      
+      ggsave(filename = file.path(output_dir,
+                                  paste0(x,".png")),
+             width = 8,
+             height = 6,
+             dpi = 100,
+             plot = the_plot)
+      
+      return(x)
+    })
+  }
+  
   return(the_model)
   
 }
