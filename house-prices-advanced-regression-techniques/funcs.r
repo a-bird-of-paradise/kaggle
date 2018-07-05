@@ -32,7 +32,8 @@ LoadDataFile <- function(the_file)
     mutate(OpenPorchSF.Grp = pmin(250, 25 * as.integer(OpenPorchSF/25))) %>%
     mutate(EnclosedPorch.Grp = pmin(250, 25 * as.integer(EnclosedPorch/25))) %>%
     mutate(ScreenPorch.Grp = pmin(250, 25 * as.integer(ScreenPorch/25))) %>%
-    mutate(MiscVal.Grp = pmin(2500, 100 * as.integer(MiscVal/100)))
+    mutate(MiscVal.Grp = pmin(2500, 100 * as.integer(MiscVal/100))) %>%
+    mutate(BedroomAbvGr.Grp = pmax(1,pmin(BedroomAbvGr,4)))
   
   return(sample_data)
 }
@@ -60,6 +61,36 @@ OneWayPlot <- function(ungrouped, group_by_var, response_var,
     ggtitle(group_by_var_sym) + 
     facet_grid(HoldoutIndicator ~ .)
 }
+
+TwoWayPlot <- function(ungrouped, x_var, y_var, response_var,
+                       holdout_var = "HoldoutIndicator")
+{
+  
+  x_var_sym <- rlang::sym(x_var)
+  y_var_sym <- rlang::sym(y_var)
+  response_var_sym <- rlang::sym(response_var)
+  holdout_var_sym <- rlang::sym(holdout_var)
+  
+  ungrouped %>%
+    select(!! x_var_sym,
+           !! y_var_sym,
+           !! response_var_sym,
+           !! holdout_var_sym,
+           "Modelled" = .fitted) %>%
+    gather(key=key,value = value,
+           -!! x_var_sym, -!! y_var_sym, -!! holdout_var_sym) %>%
+    group_by(!! x_var_sym,
+             !! y_var_sym,
+             !! holdout_var_sym,
+             key) %>%
+    summarise(mean=mean(value),
+              n=n()) %>%
+    ggplot(aes(x = !! x_var_sym,y=mean,colour=key,group=key))+
+    geom_point(aes(size=n,alpha=0.5)) + 
+    geom_line() +
+    facet_grid(vars(!!holdout_var_sym), vars(!!y_var_sym))
+}
+
 
 TimePlot <- function(ungrouped, x_var, facet_var, response_var)
 {

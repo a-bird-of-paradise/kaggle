@@ -49,7 +49,15 @@ models <- c(
     CentralAir + ExterQual + Fireplaces + GarageArea.Grp + HeatingQC +
     KitchenQual + MasVnrType + MSSubClass + MSZoning + OverallQual +
     PavedDrive + YearBuilt.Grp + OverallCond + BsmtFinType2 + GarageQual +
-    Heating + LotConfig)
+    Heating + LotConfig,
+  first_interactions_model = SalePrice ~
+    TotRmsAbvGrd.Grp + TotRmsAbvGrd.Grp^2 + LotArea.Grp + GarageCars + 
+    BsmtFinSF1.Grp + FullBath + HalfBath + Neighborhood + BsmtFinType1 +
+    Alley + BldgType + BsmtCond + BsmtExposure + BsmtUnfSF.Grp +
+    CentralAir + ExterQual + Fireplaces + GarageArea.Grp + HeatingQC +
+    KitchenQual + MasVnrType + MSSubClass + MSZoning + OverallQual +
+    PavedDrive + YearBuilt.Grp + OverallCond + BsmtFinType2 + GarageQual +
+    Heating + LotConfig + FullBath:BedroomAbvGr.Grp)
 
 glms <- purrr::map2(models, names(models), function(x,y)
 {
@@ -78,7 +86,10 @@ glms_no_holdout <- purrr::map2(models,names(models),function(x,y)
 }
 )
 
-the_glm <- glms_no_holdout[[3]]
+purrr::map(glms,broom::glance) %>% bind_rows(.id="id")
+purrr::map(glms_no_holdout,broom::glance) %>% bind_rows(.id="id")
+
+the_glm <- glms_no_holdout[[5]]
 
 broom::augment(the_glm, 
                sample_data,
@@ -89,6 +100,18 @@ broom::augment(the_glm,
   geom_point(size=1) +
   facet_grid(HoldoutIndicator ~ .)
 
-purrr::map(glms,broom::glance) %>% bind_rows(.id="id")
+glm_formula <- models[[5]]
 
-purrr::map(glms_no_holdout,broom::glance) %>% bind_rows(.id="id")
+glm_model <- glm(glm_formula,
+                 family = Gamma(link = log),
+                 sample_data %>% filter(!HoldoutIndicator))
+
+augmented_data <- broom::augment_columns(glm_model,
+                                         sample_data %>% filter(!HoldoutIndicator),
+                                         sample_data,
+                                         type.predict = "response")
+
+TwoWayPlot(augmented_data,
+           "LotArea.Grp",
+           "LotConfig",
+           "SalePrice")
