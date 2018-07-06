@@ -1,7 +1,9 @@
-library(tidyverse)
+library(party) 
 library(tree)
 library(rpart)
-library(party) 
+library(tidyverse)
+library(tweedie)
+library(statmod)
 
 LoadDataFile <- function(the_file)
 {
@@ -33,7 +35,13 @@ LoadDataFile <- function(the_file)
     mutate(EnclosedPorch.Grp = pmin(250, 25 * as.integer(EnclosedPorch/25))) %>%
     mutate(ScreenPorch.Grp = pmin(250, 25 * as.integer(ScreenPorch/25))) %>%
     mutate(MiscVal.Grp = pmin(2500, 100 * as.integer(MiscVal/100))) %>%
-    mutate(BedroomAbvGr.Grp = pmax(1,pmin(BedroomAbvGr,4)))
+    mutate(BedroomAbvGr.Grp = pmax(1,pmin(BedroomAbvGr,4))) %>%
+    rename("FirstFlrSF" = `1stFlrSF`,
+           "SecondFlrSF" = `2ndFlrSF`) %>%
+    mutate(TotalSF = FirstFlrSF+SecondFlrSF) %>%
+    mutate(FirstFlrSF.Grp = pmin(2000, 100 * as.integer(FirstFlrSF/100))) %>%
+    mutate(SecondFlrSF.Grp = pmin(2000,100 * as.integer(SecondFlrSF/ 100))) %>%
+    mutate(TotalSF.Grp = pmin(3000, 100 * as.integer(TotalSF/100)))
   
   return(sample_data)
 }
@@ -165,7 +173,7 @@ InvestigateModel <- function(ModelFunction,
   deparse(formula(the_model)) %>%
     write(file.path(output_dir,"model-formula.txt"))
   
-  if(F)
+  if(T)
   {
     purrr::map(RatingFactors,function(x)
     {

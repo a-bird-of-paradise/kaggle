@@ -81,6 +81,10 @@ glms_no_holdout <- purrr::map2(models,names(models),function(x,y)
   broom::augment(full_glm,type.predict = "response", newdata = test_data) %>%
     select(Id,SalePrice=.fitted) %>%
     write_csv(file.path(output_dir,"predicitons.csv"))
+  broom::augment(full_glm,type.predict = "response", newdata = test_data) %>%
+    select(Id,SalePrice=.fitted) %>%
+    mutate(SalePrice = round(SalePrice/500)*500) %>%
+    write_csv(file.path(output_dir,"predicitons_nearest_500.csv"))
   
   return(full_glm)
 }
@@ -112,6 +116,8 @@ augmented_data <- broom::augment_columns(glm_model,
                                          type.predict = "response")
 
 TwoWayPlot(augmented_data,
-           "LotArea.Grp",
            "LotConfig",
+           "SaleType",
            "SalePrice")
+
+OneWayPlot(augmented_data,"TotalSF.Grp","SalePrice")
