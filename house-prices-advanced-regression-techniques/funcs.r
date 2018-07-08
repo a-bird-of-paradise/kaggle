@@ -173,7 +173,7 @@ InvestigateModel <- function(ModelFunction,
   deparse(formula(the_model)) %>%
     write(file.path(output_dir,"model-formula.txt"))
   
-  if(T)
+  if(F)
   {
     purrr::map(RatingFactors,function(x)
     {
