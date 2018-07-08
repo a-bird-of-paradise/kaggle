@@ -9,7 +9,8 @@ test_data <- LoadDataFile("test.csv") %>%
                                             `1-1/2 STORY FINISHED ALL AGES` = 
                                               c("1-1/2 STORY FINISHED ALL AGES",
                                                 "1-1/2 STORY PUD - ALL AGES")),
-         MSZoning = forcats::fct_collapse(MSZoning, RL = c("RL","(Missing)")))
+         MSZoning = forcats::fct_collapse(MSZoning, RL = c("RL","(Missing)")),
+         SaleType = forcats::fct_collapse(SaleType,WD = c("WD","(Missing)")))
 
 
 rating_factors <- sample_data %>%
@@ -57,7 +58,8 @@ models <- c(
     CentralAir + ExterQual + Fireplaces + GarageArea.Grp + HeatingQC +
     KitchenQual + MasVnrType + MSSubClass + MSZoning + OverallQual +
     PavedDrive + YearBuilt.Grp + OverallCond + BsmtFinType2 + GarageQual +
-    Heating + LotConfig + FullBath:BedroomAbvGr.Grp)
+    Heating + LotConfig + FullBath:BedroomAbvGr.Grp + 
+    TotalSF.Grp:SaleType)
 
 glms <- purrr::map2(models, names(models), function(x,y)
 {
@@ -115,8 +117,8 @@ augmented_data <- broom::augment_columns(glm_model,
                                          sample_data,
                                          type.predict = "response")
 
-TwoWayPlot(augmented_data,
-           "LotConfig",
+TwoWayPlot(augmented_data %>% filter(SaleType %in% c("WD","New")),
+           "TotalSF.Grp",
            "SaleType",
            "SalePrice")
 

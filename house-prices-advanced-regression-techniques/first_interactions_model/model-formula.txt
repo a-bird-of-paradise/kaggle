@@ -5,4 +5,4 @@ SalePrice ~ TotRmsAbvGrd.Grp + TotRmsAbvGrd.Grp^2 + LotArea.Grp +
     HeatingQC + KitchenQual + MasVnrType + MSSubClass + MSZoning + 
     OverallQual + PavedDrive + YearBuilt.Grp + OverallCond + 
     BsmtFinType2 + GarageQual + Heating + LotConfig + FullBath:BedroomAbvGr.Grp + 
-    TotalSF.Grp
+    TotalSF.Grp:SaleType
