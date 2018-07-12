@@ -41,7 +41,8 @@ LoadDataFile <- function(the_file)
     mutate(TotalSF = FirstFlrSF+SecondFlrSF) %>%
     mutate(FirstFlrSF.Grp = pmin(2000, 100 * as.integer(FirstFlrSF/100))) %>%
     mutate(SecondFlrSF.Grp = pmin(2000,100 * as.integer(SecondFlrSF/ 100))) %>%
-    mutate(TotalSF.Grp = pmin(3000, 100 * as.integer(TotalSF/100)))
+    mutate(TotalSF.Grp = pmin(3000, 100 * as.integer(TotalSF/100))) %>%
+    mutate(FootPrintRatio.Grp = as.integer(pmin(15,(LotArea / FirstFlrSF))))
   
   return(sample_data)
 }

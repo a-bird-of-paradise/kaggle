@@ -59,7 +59,16 @@ models <- c(
     KitchenQual + MasVnrType + MSSubClass + MSZoning + OverallQual +
     PavedDrive + YearBuilt.Grp + OverallCond + BsmtFinType2 + GarageQual +
     Heating + LotConfig + FullBath:BedroomAbvGr.Grp + 
-    TotalSF.Grp:SaleType)
+    TotalSF.Grp:SaleType,
+  footprint_ratio_model = SalePrice ~
+    TotRmsAbvGrd.Grp + TotRmsAbvGrd.Grp^2 + LotArea.Grp + GarageCars + 
+    BsmtFinSF1.Grp + FullBath + HalfBath + Neighborhood + BsmtFinType1 +
+    Alley + BldgType + BsmtCond + BsmtExposure + BsmtUnfSF.Grp +
+    CentralAir + ExterQual + Fireplaces + GarageArea.Grp + HeatingQC +
+    KitchenQual + MasVnrType + MSSubClass + MSZoning + OverallQual +
+    PavedDrive + YearBuilt.Grp + OverallCond + BsmtFinType2 + GarageQual +
+    Heating + LotConfig + FullBath:BedroomAbvGr.Grp + 
+    TotalSF.Grp:SaleType + FootPrintRatio.Grp)
 
 glms <- purrr::map2(models, names(models), function(x,y)
 {
@@ -95,18 +104,18 @@ glms_no_holdout <- purrr::map2(models,names(models),function(x,y)
 purrr::map(glms,broom::glance) %>% bind_rows(.id="id")
 purrr::map(glms_no_holdout,broom::glance) %>% bind_rows(.id="id")
 
-the_glm <- glms_no_holdout[[5]]
+the_glm <- glms_no_holdout[[6]]
 
 broom::augment(the_glm, 
                sample_data,
                type.predict = "response") %>%
-  ggplot(aes(x = pmin(LotArea,25000), 
+  ggplot(aes(x = pmin(LotArea,15000), 
              y = .resid,
              colour = HoldoutIndicator)) + 
   geom_point(size=1) +
   facet_grid(HoldoutIndicator ~ .)
 
-glm_formula <- models[[5]]
+glm_formula <- models[[6]]
 
 glm_model <- glm(glm_formula,
                  family = Gamma(link = log),
@@ -122,4 +131,4 @@ TwoWayPlot(augmented_data %>% filter(SaleType %in% c("WD","New")),
            "SaleType",
            "SalePrice")
 
-OneWayPlot(augmented_data,"TotalSF.Grp","SalePrice")
+OneWayPlot(augmented_data,"FootPrintRatio.Grp","SalePrice")
