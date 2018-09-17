@@ -1,5 +1,6 @@
 library(tidyverse)
 library(caret)
+library(pamr)
 
 set.seed(19*13-1)
 
@@ -35,7 +36,8 @@ training_data_processed <- training_data_raw %>%
   mutate(RandomInt = PassengerId %% 10) %>% 
   mutate_if(is.character,str_trim) %>% 
   mutate(Pclass = as.factor(Pclass)) %>% 
-  mutate(Title = map_chr(Title,TitleMapper))
+  mutate(Title = map_chr(Title,TitleMapper)) %>%
+  mutate(Survived = as.factor(Survived))
 
 competition_data_processed <- competition_data %>%
   extract(Name,
@@ -119,4 +121,20 @@ broom::augment_columns(full_glm,
   mutate(.fitted = ifelse(.fitted > 0.35, 1, 0)) %>%
   rename("Survived"=.fitted) %>%
   readr::write_csv("glm-2.0.csv")
-                       
+
+
+glm_fit <- caret::train(Survived ~
+                          Title + Sex + Pclass + Pclass:Sex + Age + SibSp,
+                        data=training_data_processed,
+                        method = "glm",
+                        family = "binomial",
+                        trControl = trainControl(method = "repeatedcv",
+                                                 number = 10,
+                                                 repeats = 5))
+
+broom::augment_columns(glm_fit,
+                       newdata = competition_data_processed)  %>%
+  select(PassengerId,.fitted) %>%
+  rename("Survived"=.fitted) %>%
+  mutate(Survived = Survived - 1) %>%
+  readr::write_csv("glm-3.0.csv")
