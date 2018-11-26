@@ -128,7 +128,7 @@ augmented_data <- broom::augment_columns(glm_model,
 
 TwoWayPlot(augmented_data %>% filter(SaleType %in% c("WD","New")),
            "TotalSF.Grp",
-           "SaleType",
+           "FootPrintRatio.Grp",
            "SalePrice")
 
 OneWayPlot(augmented_data,"FootPrintRatio.Grp","SalePrice")
